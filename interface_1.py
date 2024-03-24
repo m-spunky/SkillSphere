@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+p = ResumeParser()
 # Profile Authentication
 def save_credentials(credentials):
     with open("credentials.txt", "w") as f:
@@ -49,7 +50,6 @@ def signup(credentials, username, password):
 
 # Function to parse resume
 def parse_resume(resume_file, use_openai=False, openai_key=""):
-    p = ResumeParser(use_openai, openai_key)
     resume_text = pdf_to_string(resume_file)
     resume = p.extract_resume_fields(resume_text)
     if isinstance(resume, Resume):
@@ -58,8 +58,6 @@ def parse_resume(resume_file, use_openai=False, openai_key=""):
 
 # Function to recommend
 def recommendation(resume_file, use_openai=False, openai_key=""):
-    p = ResumeParser(use_openai, openai_key)
-    resume_text = pdf_to_string(resume_file)
     recommend = p.recommendation_skill_based()
     
     recommend = recommend.json()
@@ -77,7 +75,6 @@ def display_resource_card(resource):
     st.write(f"**Description:** {resource['description']}")
     st.write(f"[Link to resource]({resource['url']})")
     st.markdown("---")  # Add a horizontal line between cards
-
 
 
 
@@ -114,7 +111,7 @@ def get_conversational_chain():
 #  Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
 #     provided context just say
     prompt_template = """
-    Resume documents are linked as content analyze it answer the question asked .
+    Resume documents are linked as content analyze it answer the question asked .you can also search answer out from context (if needed)
     \n\n
     Context:\n {context}?\n
     Question: \n{question}\n
@@ -151,29 +148,14 @@ def user_input_chain(user_question,history):
 
 
 # Job Search
-def search_job(keywords):
-    import requests
-
-    url = "https://indeed12.p.rapidapi.com/jobs/search"
-
-    querystring = {"query":keywords,"location":"india","page_id":"1","fromage":"3","radius":"50"}
-
-    headers = {
-        "X-RapidAPI-Key": "41b545823cmshfc13dd301cf3ea5p152545jsn7c4734827129",
-        "X-RapidAPI-Host": "indeed12.p.rapidapi.com"
-    }
-
-    response = requests.get(url, headers=headers, params=querystring)
-
-    print(response.json())
-    return response.json()
-
 
 
 # Streamlit app
 def main():
+    st.set_page_config('SkillSphere')
    
     st.title("SkillSphere 🌐")
+    st.image('logoh-transformed.png')
     st.sidebar.header("MENU")
 
     # Initialize session state
@@ -181,8 +163,9 @@ def main():
         st.session_state.user_credentials = load_credentials()
 
     action = st.sidebar.selectbox("Choose Action", ["Login", "Sign-up"])
-
+    
     if action == "Login":
+       
         st.sidebar.subheader("Login")
         username = st.sidebar.text_input("Username")
         password = st.sidebar.text_input("Password", type="password")
@@ -254,6 +237,8 @@ def main():
 
             if resume_file is not None:
                 st.markdown("<h1 style=color:DodgerBlue;font-size: 20px;text-align: center>Resume Information</h1>",unsafe_allow_html=True)
+                
+               
                 resume_info = parse_resume(resume_file)
                 st.json(resume_info)
 
@@ -263,7 +248,7 @@ def main():
                     match_output = match_resume_job(resume_file, job_text)
                     st.markdown(match_output)
 
-        if action2 == 'Recommendation':
+        if action2 == 'Recommend me':
             with st.sidebar:
                 st.subheader("Submit resume")
                 resume_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"])
@@ -278,8 +263,12 @@ def main():
 
         if action2 == 'Job Search':
             st.markdown("<h1 style=color:DodgerBlue;font-size: 20px;text-align: center>Job Search</h1>",unsafe_allow_html=True)
-            key = "software engineer"
-            st.json(search_job(key))
+
+
+            df_jobs = p.process_resume()
+            # Display recommended jobs as DataFrame
+            st.write("Recommended Jobs:")
+            st.dataframe(df_jobs[['Job Title','Company Name','Location','Industry','Sector','Average Salary']])
 
 
 if __name__ == "__main__":

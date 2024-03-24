@@ -15,6 +15,16 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from resume_template import Resume
 
+import streamlit as st
+import pandas as pd
+import PyPDF2
+from pyresparser import ResumeParser
+from sklearn.neighbors import NearestNeighbors
+from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.corpus import stopwords
+stopw  = set(stopwords.words('english'))
+
+jd_df=pd.read_csv(r'C:\Users\soham\Desktop\HACK AI\47_Phoenix_3\jd_structured_data.csv')
 
 load_dotenv()
 os.getenv("GOOGLE_API_KEY")
@@ -112,6 +122,9 @@ class ResumeParser:
             print(f"Exception: {e}")
             #print(output)
             return output
+        
+    def get_skills(self):
+        return self.skills
 
     def run(self, pdf_file_path):
         text = pdf_to_string(pdf_file_path)
@@ -163,6 +176,43 @@ class ResumeParser:
 
         return output
 
+
+    # Function to process the resume and recommend jobs
+    def process_resume(self):
+        stopw  = set(stopwords.words('english'))
+
+        jd_df=pd.read_csv(r'C:\Users\soham\Desktop\HACK AI\47_Phoenix_3\jd_structured_data.csv')
+
+        def getNearestN(query):
+            queryTFIDF_ = vectorizer.transform(query)
+            distances, indices = nbrs.kneighbors(queryTFIDF_)
+            return distances, indices
+
+
+        skills = ['Deep  Learning', 'Python', 'Web  Service', 'C, C++', 'Generative  AI', '.Net Programming']
+        # Feature Engineering:
+        vectorizer = TfidfVectorizer()
+        tfidf = vectorizer.fit_transform(skills)
+
+        
+        nbrs = NearestNeighbors(n_neighbors=1, n_jobs=-1).fit(tfidf)
+        jd_test = (jd_df['Processed_JD'].values.astype('U'))
+
+        distances, indices = getNearestN(jd_test)
+        test = list(jd_test) 
+        matches = []
+
+        for i,j in enumerate(indices):
+            dist=round(distances[i][0],2)
+            temp = [dist]
+            matches.append(temp)
+        
+        matches = pd.DataFrame(matches, columns=['Match confidence'])
+
+        # Following recommends Top 5 Jobs based on candidate resume:
+        jd_df['match']=matches['Match confidence']
+        
+        return jd_df.head(5).sort_values('match')
 
 if __name__ == "__main__":
     p = ResumeParser(use_openai=False)
