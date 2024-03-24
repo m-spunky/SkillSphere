@@ -44,7 +44,6 @@ class ResumeParser:
         self.use_openai = use_openai
         self.openai_key = openai_key
         self.model = None
-        self.set_key()
         self.set_model()
 
     def set_key(self):
@@ -125,24 +124,45 @@ class ResumeParser:
 
         prompt_template = PromptTemplate(
             template=template,
-            input_variables=["resume", "job_description"],
+           input_variables=["resume", "job_description"],
         )
         # Invoke the language model and process the resume
         formatted_input = prompt_template.format_prompt(resume=resume_txt, job_description=job_description)
         llm = self.model
-        # print("llm", llm)
-        with get_openai_callback() as cb:
-            output = llm.invoke(formatted_input.to_string())
-            print(cb)
+        output = llm.invoke(formatted_input.to_string())
 
-        # print(output)  # Print the output object for debugging
+
         if isinstance(output, BaseMessage):
             output = output.content
         return output
 
+    def recommendation_skill_based(self):
+        """
+        Analyze a skills and recommend course on basis of that.
 
+        Parameters:
+        skills (list):list of skills.
+       
+        Returns:
+        dict: A dictionary containing structured information extracted web.
+        """
+        # The Resume object 
+        with open("prompts/prompts_recommendation.prompt", "r") as f:
+            template = f.read()
 
+        prompt_template = PromptTemplate(
+            template=template,
+            input_variables=["skills"],
+        )
+        # Invoke the language model and process the resume
+        formatted_input = prompt_template.format_prompt(self.skills)
+        llm = self.model
+       
+        output = llm.invoke(formatted_input.to_string())
 
+        print(output)
+
+        
 if __name__ == "__main__":
     p = ResumeParser(use_openai=False)
     res = p.run("samples/samples_0.pdf")
