@@ -1,0 +1,15 @@
+Analyze the provided job description and identify the key skills and experiences required for the position.
+Using the identified skills and your understanding of the provided resume, create a new profile section for the resume highlighting the most relevant skills and experiences that directly match the requirements outlined in the job description.
+Ensure the profile section is concise and impactful, using strong action verbs and quantifiable achievements where possible.
+Aim to keep the profile section within 4-5 sentences.
+----
+
+Job Description:
+{job_description}
+
+----
+
+resume:
+{resume}
+
+----

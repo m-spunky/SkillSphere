@@ -1,0 +1,20 @@
+Given the provided resume, extract and organize the following information into a structured JSON format.
+Ensure that each field is accurately represented with the correct data types according to the defined classes.
+If a section is not applicable or the information is unavailable, omit that particular field from the JSON object.
+
+Utilize the provided response template for formatting.
+----
+
+Response Template:
+{response_template}
+
+----
+
+resume:
+{resume}
+
+----
+
+
+
+

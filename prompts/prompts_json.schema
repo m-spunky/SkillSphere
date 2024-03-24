@@ -1,0 +1,70 @@
+{
+  "personal_details": {
+    "full_name": "str",
+    "contact_info": {
+      "email": "Optional[str]",
+      "phone": "Optional[str]",
+      "linkedin": "Optional[str]"
+    },
+    "professional_summary": "Optional[str]"
+  },
+  "education": [
+    {
+      "institution": "Optional[str]",
+      "degree": "Optional[str]",
+      "field_of_study": "Optional[str]",
+      "graduation_date": "Optional[str]"
+    }
+  ],
+  "work_experience": [
+    {
+      "company": "Optional[str]",
+      "title": "Optional[str]",
+      "duration": "Optional[str]",
+      "description": "Optional[str]",
+      "notable_contributions": "Optional[List[str]]"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Optional[str]",
+      "description": "Optional[str]",
+      "technologies": "Optional[str]",
+      "role": "Optional[str]"
+    }
+  ],
+  "skills": "List[str]",
+  "certifications": [
+    {
+      "title": "Optional[str]",
+      "certifying_body": "Optional[str]",
+      "date": "Optional[str]"
+    }
+  ],
+  "publications": [
+    {
+      "title": "Optional[str]",
+      "co_authors": "List[str]",
+      "date": "Optional[str]"
+    }
+  ],
+  "awards": [
+    {
+      "title": "Optional[str]",
+      "awarding_body": "Optional[str]",
+      "date": "Optional[str]"
+    }
+  ],
+  "additional_sections": {
+    "volunteer_experience": [
+      {
+        "organization": "Optional[str]",
+        "role": "Optional[str]",
+        "duration": "Optional[str]",
+        "description": "Optional[str]"
+      }
+    ],
+    "languages": "Optional[List[str]]",
+    "interests": "Optional[List[str]]"
+  }
+}

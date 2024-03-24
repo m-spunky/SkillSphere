@@ -42,14 +42,14 @@ def pdf_to_string(file):
 class ResumeParser:
     def __init__(self, use_openai=False, openai_key=""):
         self.use_openai = use_openai
-        self.openai_key = "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"
+        self.openai_key = openai_key
         self.model = None
         self.set_key()
         self.set_model()
 
     def set_key(self):
-        if len(self.openai_key) == 0 and "OPENAI_API_KEY" in os.environ:
-            self.openai_key = os.environ["OPENAI_API_KEY"]
+        if len(self.openai_key) == 0 and "OPENAI_API_KEY" in os.getenv:
+            self.openai_key = os.getenv["OPENAI_API_KEY"]
 
     def set_model(self):
         if self.use_openai:
@@ -68,7 +68,7 @@ class ResumeParser:
         Returns:
         dict: A dictionary containing structured information extracted from the resume.
         """
-        # The Resume object is imported from the local resume_template file
+        # The Resume object 
         with open("prompts/prompts_resume_extraction.prompt", "r") as f:
             template = f.read()
 

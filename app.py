@@ -17,12 +17,5 @@ def main():
     if pdf_file is not None:
         pass
 
-
-    # Job matching section
-    st.subheader("Job Matcher")
-    job_text = st.text_area("Enter the job description")
-    if job_text:
-        pass
-    
 if __name__ == "__main__":
     main()
