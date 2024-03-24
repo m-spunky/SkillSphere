@@ -45,10 +45,7 @@ class ResumeParser:
         self.openai_key = openai_key
         self.model = None
         self.set_model()
-
-    def set_key(self):
-        if len(self.openai_key) == 0 and "OPENAI_API_KEY" in os.getenv:
-            self.openai_key = os.getenv["OPENAI_API_KEY"]
+        self.skills = None
 
     def set_model(self):
         if self.use_openai:
@@ -81,20 +78,24 @@ class ResumeParser:
             input_variables=["resume"],
             partial_variables={"response_template": json_schema},
         )
-        # Invoke the language model and process the resume
+
         formatted_input = prompt_template.format_prompt(resume=full_text)
         llm = self.model
        
         output = llm.invoke(formatted_input.to_string())
            
-
-        print(output)  # Print the output object for debugging
+        import json
+         # Print the output object for debugging
         if isinstance(output, BaseMessage):
             output = output.content
         try:
             parsed_output = parser.parse(output)
-            #json_output = parsed_output.json()
-            #print(json_output)
+            
+            json_output = parsed_output.json()
+            data = json.loads(json_output)
+            print(data["skills"])
+            self.skills = data["skills"]
+            
             return parsed_output
 
         except ValidationError as e:
@@ -111,7 +112,6 @@ class ResumeParser:
             print(f"Exception: {e}")
             #print(output)
             return output
-
 
     def run(self, pdf_file_path):
         text = pdf_to_string(pdf_file_path)
@@ -155,15 +155,16 @@ class ResumeParser:
             input_variables=["skills"],
         )
         # Invoke the language model and process the resume
-        formatted_input = prompt_template.format_prompt(self.skills)
+        skills = self.skills
+        formatted_input = prompt_template.format_prompt(skills=skills)
         llm = self.model
        
         output = llm.invoke(formatted_input.to_string())
 
-        print(output)
+        return output
 
-        
+
 if __name__ == "__main__":
     p = ResumeParser(use_openai=False)
     res = p.run("samples/samples_0.pdf")
-    print(res)
+    # print(res)
