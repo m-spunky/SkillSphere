@@ -1,7 +1,6 @@
 from pydantic.v1 import BaseModel, Field, ValidationError
 from typing import List, Optional, Dict
 
-# The following classes are for the resume template
 
 class ContactInfo(BaseModel):
     email: Optional[str] = None

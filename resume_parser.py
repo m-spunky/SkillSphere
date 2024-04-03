@@ -14,7 +14,6 @@ import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from resume_template import Resume
-
 import streamlit as st
 import pandas as pd
 import PyPDF2
@@ -103,7 +102,7 @@ class ResumeParser:
             
             json_output = parsed_output.json()
             data = json.loads(json_output)
-            print(data["skills"])
+            # print(data["skills"])
             self.skills = data["skills"]
             
             return parsed_output
@@ -119,8 +118,8 @@ class ResumeParser:
             return output
 
         except Exception as e:
-            print(f"Exception: {e}")
-            #print(output)
+        #     print(f"Exception: {e}")
+        #     #print(output)
             return output
         
     def get_skills(self):

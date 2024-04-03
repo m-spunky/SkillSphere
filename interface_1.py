@@ -51,7 +51,9 @@ def signup(credentials, username, password):
 # Function to parse resume
 def parse_resume(resume_file, use_openai=False, openai_key=""):
     resume_text = pdf_to_string(resume_file)
+    print("hello")
     resume = p.extract_resume_fields(resume_text)
+    print("hello")
     if isinstance(resume, Resume):
         resume = resume.json()
     return resume
